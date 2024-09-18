@@ -39,7 +39,7 @@ for (const menus of menu) {
                     <img class="object-cover" src=${items.image} alt="Item Image" />
                 </figure>
                 <div class="card-body">
-                    <h2 class="card-title">${items.id }</h2>
+                    <h2 class="card-title">${items.name}</h2>
                     <p>${items.description}</p>
                 </div>
             </div>`;
