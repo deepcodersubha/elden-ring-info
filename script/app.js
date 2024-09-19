@@ -79,7 +79,7 @@ const displayItems = async (endpoint) => {
           </figure>
           <div class="card-body h-20">
             <h2 class="card-title">${item.name}</h2>
-            <p>${shortenedDescription}</p>
+            <p>${shortenedDescription || "Description Not available"}</p>
           </div>
         </div>`;
 
