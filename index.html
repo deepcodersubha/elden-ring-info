@@ -18,13 +18,13 @@
 
     <main>
         <div class="flex ">
-            <div class="bg-gray-300 w-60">
+            <div class="bg-gray-300 w-1/6 h-screen fixed left-0 top-0 ">
                 <ul id="menuItem" class="p-5 space-y-2 font-bold">
                     <li><a class="text-2xl">Elden Ring</a></li>
                 </ul>
             </div>
-            <section class="mx-auto p-5">
-                <label class="input input-bordered flex items-center gap-2">
+            <section class="ms-auto p-5 w-5/6">
+                <label class="w-[25%] input input-bordered flex items-center gap-2">
                     <input type="text" class="grow" placeholder="Search" />
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                         class="h-4 w-4 opacity-70">
@@ -34,7 +34,7 @@
                     </svg>
                 </label>
                 <div class="">
-                    <div id="gameContent" class="grid grid-cols-4 gap-y-5 gap-x-10"></div>
+                    <div id="gameContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 gap-y-5 gap-x-10 mt-5"></div>
                 </div>
             </section>
         </div>
