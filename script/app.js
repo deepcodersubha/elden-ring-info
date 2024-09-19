@@ -1,9 +1,12 @@
+// Base elements
 const menuItemContent = document.querySelector("#menuItem");
 const gameContent = document.querySelector("#gameContent");
 
 const BASE_URL = "https://eldenring.fanapis.com/api";
 
+// Menu array
 const menu = [
+  // { title: "All" },
   { title: "Ammos" },
   { title: "Armors" },
   { title: "Ashes of War" },
@@ -21,63 +24,77 @@ const menu = [
   { title: "Weapons" },
 ];
 
-for (const menus of menu) {
-  let endpoint = menus.title.split(" ")[0].toLowerCase();
+// Function to fetch data from the API
+const fetchData = async (endpoint) => {
+  try {
+    let url = `${BASE_URL}/${endpoint}`;
+    const response = await fetch(url);
+    if (response.status <= 200 && response.status >= 300) {
+      throw new Error(`The server returned an error: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error("There has been a problem with your fetch operation:", error);
+  }
+};
 
-  menuItemContent.innerHTML += `<li><a class="menuItems">${menus.title}</a></li>`;
+// Function to generate HTML for each menu item and set event listeners
+const generateMenu = () => {
+  menu.forEach((menuItem) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<a class="menuItems">${menuItem.title}</a>`;
+    menuItemContent.appendChild(li);
 
-  const menuItems = document.querySelectorAll(".menuItems");
-
-  menuItems.forEach((element) => {
-    element.addEventListener("click", () => {
-      console.log(element.textContent);
+    li.querySelector(".menuItems").addEventListener("click", async () => {
+      endpoint = menuItem.title.split(" ")[0].toLowerCase();
+      await displayItems(endpoint);
     });
   });
+};
 
-  fetch(`${BASE_URL}/${endpoint}`)
-    .then((response) => {
-      if (response.status >= 200 && response.status <= 300) {
-        return response.json();
-      } else {
-        throw new Error("The server returned an error: " + response.status);
-      }
-    })
-    .then((data) => {
-      data.data.forEach((items) => {
-        const readMore = "<a class='readMore text-blue-500'>...Read More</a>";
+// Function to display items in gameContent
+const displayItems = async (endpoint) => {
+  gameContent.innerHTML = ""; // Clear previous content
+  const items = await fetchData(endpoint);
 
-        const shortenedDescription =
-          items.description?.length > 100
-            ? items.description.substring(0, 100) + readMore
-            : items.description;
+  if (items && items.length) {
+    items.forEach((item) => {
+      const readMore = "<a class='readMore text-blue-500'>...Read More</a>";
 
-        const cardHtml = `<div class="card bg-base-100 w-96 h-[400px] shadow-xl">
-                <figure>
-                    <img class="h-[200px] w-full object-contain" src=${
-                      items.image
-                        ? items.image
-                        : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
-                    } alt="Item Image" />
-                </figure>
-                <div class="card-body h-20">
-                    <h2 class="card-title">${items.name}</h2>
-                    <p>${shortenedDescription}</p>
-                </div>
-            </div>`;
+      const shortenedDescription =
+        item.description?.length > 100
+          ? item.description.substring(0, 100) + readMore
+          : item.description;
 
-        const cardElement = document.createElement("div");
-        cardElement.innerHTML = cardHtml;
-        gameContent.appendChild(cardElement);
+      const cardHtml = `
+        <div class="card bg-base-100 w-96 h-[400px] shadow-xl">
+          <figure>
+            <img class="h-[200px] w-full object-contain" 
+              src="${
+                item.image ||
+                "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+              }" 
+              alt="Item Image" />
+          </figure>
+          <div class="card-body h-20">
+            <h2 class="card-title">${item.name}</h2>
+            <p>${shortenedDescription}</p>
+          </div>
+        </div>`;
 
-        cardElement.querySelector(".card").addEventListener("click", () => {
-          console.log(items.id);
-        });
+      const cardElement = document.createElement("div");
+      cardElement.innerHTML = cardHtml;
+      gameContent.appendChild(cardElement);
+
+      cardElement.querySelector(".card").addEventListener("click", () => {
+        console.log(item.id);
       });
-    })
-    .catch((error) => {
-      console.error(
-        "There has been a problem with your fetch operation:",
-        error
-      );
     });
-}
+  } else {
+    gameContent.innerHTML = "<p>No items found</p>";
+  }
+};
+
+// Initialize the menu
+generateMenu();
